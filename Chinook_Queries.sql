@@ -58,24 +58,63 @@ OR Year (InvoiceDate) = 2011
 GROUP BY Year(InvoiceDate);
 
 -- 10. invoice_37_line_item_count.sql: Looking at the InvoiceLine table, provide a query that COUNTs the number of line items for Invoice ID 37.
+SELECT COUNT(*) as LineItems
+FROM InvoiceLine
+WHERE InvoiceId = 37
 
 -- 11. line_items_per_invoice.sql: Looking at the InvoiceLine table, provide a query that COUNTs the number of line items for each Invoice. 
 -- HINT: GROUP BY
+SELECT COUNT(InvoiceId) as LineItems
+FROM InvoiceLine
+GROUP BY InvoiceId
 
 -- 12. line_item_track.sql: Provide a query that includes the purchased track name with each invoice line item.
+SELECT il.InvoiceId as LineItems, t.Name
+FROM InvoiceLine il
+JOIN Track t
+ON il.TrackId = t.TrackId
 
 -- 13. line_item_track_artist.sql: Provide a query that includes the purchased track name AND artist name with each invoice line item.
+SELECT il.InvoiceId as LineItems, t.Name as TrackName, a.Name as ArtistName
+FROM InvoiceLine il
+JOIN Track t
+ON il.TrackId = t.TrackId
+JOIN Album al
+ON al.AlbumId = il.TrackId
+JOIN Artist a
+ON al.ArtistId = a.ArtistId
 
 -- 14. country_invoices.sql: Provide a query that shows the # of invoices per country. 
 -- HINT: GROUP BY
+SELECT COUNT(BillingCountry) as Invoices, BillingCountry
+FROM Invoice
+GROUP BY BillingCountry
 
 -- 15. playlists_track_count.sql: Provide a query that shows the total number of tracks in each playlist. 
 -- The Playlist name should be include on the resulant table.
+SELECT COUNT(pt.TrackId) as NumOfTracks, p.Name
+FROM PlaylistTrack pt
+JOIN Playlist p
+ON p.PlaylistId = pt.PlaylistId
+GROUP BY p.Name
 
 -- 16. tracks_no_id.sql: Provide a query that shows all the Tracks, but displays no IDs. 
 -- The result should include the Album name, Media type and Genre.
+SELECT t.Name as SongTitle, al.Title as Album, m.Name as MediaType, g.Name as Genere
+FROM Track t
+JOIN Album al
+ON t.AlbumId = al.AlbumId
+JOIN MediaType m
+ON t.MediaTypeId = m.MediaTypeId
+JOIN Genre g
+ON t.GenreId = g.GenreId
 
 -- 17. invoices_line_item_count.sql: Provide a query that shows all Invoices but includes the # of invoice line items.
+SELECT COUNT(il.InvoiceId) as NumLineItems, i.InvoiceId
+FROM Invoice i
+LEFT JOIN InvoiceLine il
+ON il.InvoiceId = i.InvoiceId
+GROUP BY i.InvoiceId
 
 -- 18. sales_agent_total_sales.sql: Provide a query that shows total sales made by each sales agent.
 

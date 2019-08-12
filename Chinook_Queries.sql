@@ -187,7 +187,7 @@ GROUP BY i.BillingCountry) as ts
  AND ts.TotalSales = i.Total
 
 -- 24. top_2013_track.sql: Provide a query that shows the most purchased track of 2013.
-SELECT TOP 1 t.Name as TrackName, COUNT(il.TrackId) as NumberPurchased
+SELECT TOP 1 t.Name as TrackName, SUM(il.TrackId) as NumberPurchased
 FROM Track t
 JOIN InvoiceLine il 
 ON il.TrackId = t.TrackId
@@ -195,20 +195,20 @@ JOIN Invoice i
 ON i.InvoiceId = il.InvoiceId
 WHERE Year (InvoiceDate) = 2013
 GROUP BY t.Name
-ORDER BY COUNT(il.TrackId) DESC;
+ORDER BY SUM(il.TrackId) DESC;
 
 -- 25. top_5_tracks.sql: Provide a query that shows the top 5 most purchased songs.
-SELECT TOP 5 t.Name as TrackName, COUNT(il.TrackId) as NumberPurchased
+SELECT TOP 5 t.Name as TrackName, SUM(il.TrackId) as NumberPurchased
 FROM Track t
 JOIN InvoiceLine il 
 ON il.TrackId = t.TrackId
 JOIN Invoice i 
 ON i.InvoiceId = il.InvoiceId
 GROUP BY t.Name
-ORDER BY COUNT(il.TrackId) DESC;
+ORDER BY SUM(il.TrackId) DESC;
 
 -- 26. top_3_artists.sql: Provide a query that shows the top 3 best selling artists.
-SELECT TOP 3 a.Name, COUNT(il.TrackId) as TracksSold
+SELECT TOP 3 a.Name, SUM(il.TrackId) as TracksSold
 FROM Artist a
 JOIN Album al 
 ON al.ArtistId = a.ArtistId
@@ -219,7 +219,7 @@ ON il.TrackId = t.TrackId
 JOIN Invoice i 
 ON i.InvoiceId = il.InvoiceId
 GROUP BY a.Name
-ORDER BY COUNT(il.TrackId) DESC;
+ORDER BY SUM(il.TrackId) DESC;
 
 -- 27. top_media_type.sql: Provide a query that shows the most purchased Media Type.
 SELECT TOP 1 m.Name as MediaType, COUNT(il.TrackId) as NumOfTracksSold

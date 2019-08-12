@@ -117,22 +117,114 @@ ON il.InvoiceId = i.InvoiceId
 GROUP BY i.InvoiceId
 
 -- 18. sales_agent_total_sales.sql: Provide a query that shows total sales made by each sales agent.
+SELECT SUM(i.Total) as TotalSales, e.EmployeeId, e.FirstName + ' ' + e.LastName as EmployeeName
+FROM Employee e
+JOIN Customer c
+ON e.EmployeeId = c.SupportRepId
+JOIN Invoice i
+ON c.CustomerId = i.CustomerId
+WHERE e.Title = 'Sales Support Agent'
+GROUP BY e.EmployeeId, e.FirstName, e.LastName
 
 -- 19. top_2009_agent.sql: Which sales agent made the most in sales in 2009?
 -- Hint: Use the MAX function on a subquery.
+SELECT TOP 1 Sum(i.Total) TotalSales, e.FirstName + ' ' + e.LastName as EmployeeName
+FROM Employee e
+JOIN Customer c
+ON e.EmployeeId = c.SupportRepId
+JOIN Invoice i
+ON c.CustomerId = i.CustomerId
+WHERE e.Title = 'Sales Support Agent'
+AND YEAR(i.InvoiceDate) = 2009
+GROUP BY e.EmployeeId, e.FirstName, e.LastName
+ORDER BY Sum(i.Total) desc
 
 -- 20. top_agent.sql: Which sales agent made the most in sales over all?
+SELECT TOP 1 Sum(i.Total) TotalSales, e.FirstName + ' ' + e.LastName as EmployeeName
+FROM Employee e
+JOIN Customer c
+ON e.EmployeeId = c.SupportRepId
+JOIN Invoice i
+ON c.CustomerId = i.CustomerId
+WHERE e.Title = 'Sales Support Agent'
+GROUP BY e.EmployeeId, e.FirstName, e.LastName
+ORDER BY Sum(i.Total) desc
 
 -- 21. sales_agent_customer_count.sql: Provide a query that shows the count of customers assigned to each sales agent.
+SELECT COUNT(c.CustomerId) as NumOfCustomers, e.FirstName + ' ' + e.LastName as EmployeeName
+FROM Customer c
+JOIN Employee e
+ON c.SupportRepId = e.EmployeeId
+WHERE e.Title = 'Sales Support Agent'
+GROUP BY e.FirstName, e.LastName
 
 -- 22. sales_per_country.sql: Provide a query that shows the total sales per country.
+SELECT Sum(i.Total) TotalSales, i.BillingCountry
+FROM Employee e
+JOIN Customer c
+ON e.EmployeeId = c.SupportRepId
+JOIN Invoice i
+ON c.CustomerId = i.CustomerId
+GROUP BY i.BillingCountry
+ORDER BY Sum(i.Total) desc
 
 -- 23. top_country.sql: Which country's customers spent the most?
+SELECT c.FirstName, c.LastName, ts.BillingCountry, ts.TotalSales
+FROM Employee e
+JOIN Customer c
+    on e.EmployeeId = c.SupportRepId
+JOIN Invoice i
+    on i.CustomerId = c.CustomerId
+JOIN
+(SELECT Max(i.Total) TotalSales, i.BillingCountry
+FROM Employee e
+JOIN Customer c
+ON e.EmployeeId = c.SupportRepId
+JOIN Invoice i
+ON c.CustomerId = i.CustomerId
+GROUP BY i.BillingCountry) as ts
+ ON ts.BillingCountry = i.BillingCountry
+ AND ts.TotalSales = i.Total
 
 -- 24. top_2013_track.sql: Provide a query that shows the most purchased track of 2013.
+SELECT TOP 1 t.Name as TrackName, COUNT(il.TrackId) as NumberPurchased
+FROM Track t
+JOIN InvoiceLine il 
+ON il.TrackId = t.TrackId
+JOIN Invoice i 
+ON i.InvoiceId = il.InvoiceId
+WHERE Year (InvoiceDate) = 2013
+GROUP BY t.Name
+ORDER BY COUNT(il.TrackId) DESC;
 
 -- 25. top_5_tracks.sql: Provide a query that shows the top 5 most purchased songs.
+SELECT TOP 5 t.Name as TrackName, COUNT(il.TrackId) as NumberPurchased
+FROM Track t
+JOIN InvoiceLine il 
+ON il.TrackId = t.TrackId
+JOIN Invoice i 
+ON i.InvoiceId = il.InvoiceId
+GROUP BY t.Name
+ORDER BY COUNT(il.TrackId) DESC;
 
 -- 26. top_3_artists.sql: Provide a query that shows the top 3 best selling artists.
+SELECT TOP 3 a.Name, COUNT(il.TrackId) as TracksSold
+FROM Artist a
+JOIN Album al 
+ON al.ArtistId = a.ArtistId
+JOIN Track t 
+ON t.AlbumId = al.AlbumId
+JOIN InvoiceLine il 
+ON il.TrackId = t.TrackId
+JOIN Invoice i 
+ON i.InvoiceId = il.InvoiceId
+GROUP BY a.Name
+ORDER BY COUNT(il.TrackId) DESC;
 
 -- 27. top_media_type.sql: Provide a query that shows the most purchased Media Type.
+SELECT TOP 1 m.Name as MediaType, COUNT(il.TrackId) as NumOfTracksSold
+FROM MediaType m
+JOIN Track t ON m.MediaTypeId = t.MediaTypeId
+JOIN InvoiceLine il ON il.TrackId = t.TrackId
+GROUP BY m.Name
+ORDER BY COUNT(il.TrackId) DESC;

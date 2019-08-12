@@ -224,7 +224,9 @@ ORDER BY COUNT(il.TrackId) DESC;
 -- 27. top_media_type.sql: Provide a query that shows the most purchased Media Type.
 SELECT TOP 1 m.Name as MediaType, COUNT(il.TrackId) as NumOfTracksSold
 FROM MediaType m
-JOIN Track t ON m.MediaTypeId = t.MediaTypeId
-JOIN InvoiceLine il ON il.TrackId = t.TrackId
+JOIN Track t 
+ON m.MediaTypeId = t.MediaTypeId
+JOIN InvoiceLine il 
+ON il.TrackId = t.TrackId
 GROUP BY m.Name
 ORDER BY COUNT(il.TrackId) DESC;
